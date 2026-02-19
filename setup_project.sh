@@ -26,6 +26,29 @@ fi
 VERSION=$1
 PROJECT_DIR="attendance_tracker_${VERSION}"
 
+ARCHIVE_NAME="${PROJECT_DIR}_archive"
+
+# ----------------------------
+# Trap for Ctrl + C (SIGINT)
+# ----------------------------
+
+cleanup() {
+    echo ""
+    echo "Interrupt detected. Archiving project..."
+
+    if [ -d "$PROJECT_DIR" ]; then
+        tar -czf "${ARCHIVE_NAME}.tar.gz" "$PROJECT_DIR"
+        echo "Project archived as ${ARCHIVE_NAME}.tar.gz"
+
+        rm -rf "$PROJECT_DIR"
+        echo "Incomplete directory removed."
+    fi
+
+    exit 1
+}
+
+trap cleanup SIGINT
+
 echo "Creating project: $PROJECT_DIR"
 # Check if directory already exists
 if [ -d "$PROJECT_DIR" ]; then
