@@ -19,14 +19,14 @@ fi
 
 echo "Python3 detected successfully."
 if [ -z "$1" ]; then
-    echo "Usage: ./setup_project.sh <version>"
+    echo "Usage: ./setup_project.sh (version name)"
     exit 1
 fi
 
 VERSION=$1
-PROJECT_DIR="attendance_tracker_${VERSION}"
+Project_Name="attendance_tracker_${VERSION}"
 
-ARCHIVE_NAME="${PROJECT_DIR}_archive"
+ARCHIVE_NAME="${Project_Name}_archive"
 
 # ----------------------------
 # Trap for Ctrl + C (SIGINT)
@@ -36,11 +36,11 @@ cleanup() {
     echo ""
     echo "Interrupt detected. Archiving project..."
 
-    if [ -d "$PROJECT_DIR" ]; then
-        tar -czf "${ARCHIVE_NAME}.tar.gz" "$PROJECT_DIR"
+    if [ -d "$Project_Name" ]; then
+        tar -czf "${ARCHIVE_NAME}.tar.gz" "$Project_Name"
         echo "Project archived as ${ARCHIVE_NAME}.tar.gz"
 
-        rm -rf "$PROJECT_DIR"
+        rm -rf "$Project_Name"
         echo "Incomplete directory removed."
     fi
 
@@ -49,19 +49,19 @@ cleanup() {
 
 trap cleanup SIGINT
 
-echo "Creating project: $PROJECT_DIR"
+echo "Creating project: $Project_Name"
 # Check if directory already exists
-if [ -d "$PROJECT_DIR" ]; then
+if [ -d "$Project_Name" ]; then
     echo "Error: Directory already exists."
     exit 1
 fi
 
 # Create directory structure
-mkdir -p "$PROJECT_DIR/Helpers"
-mkdir -p "$PROJECT_DIR/reports"
+mkdir -p "$Project_Name/Helpers"
+mkdir -p "$Project_Name/reports"
 
 echo "Directory structure created successfully."
-cat <<EOF > "$PROJECT_DIR/attendance_checker.py"
+cat <<EOF > "$Project_Name/attendance_checker.py"
 import csv
 import json
 import os
@@ -104,14 +104,14 @@ print(f"[DRY RUN] Email to {email}: {message}")
 if __name__ == "__main__":
 run_attendance_check()
 EOF
-cat <<EOF > "$PROJECT_DIR/Helpers/assets.csv"
+cat <<EOF > "$Project_Name/Helpers/assets.csv"
 Email ,Names, Attendance Count, Absence Count
 alice@example.com ,Alice Johnson ,14, 1
 bob@example.com ,Bob Smith ,7, 8
 charlie@example.com ,Charlie Davis ,4 ,11
 diana@example.com ,Diana Prince ,15 ,0
 EOF
-cat <<EOF > "$PROJECT_DIR/Helpers/config.json"
+cat <<EOF > "$Project_Name/Helpers/config.json"
 {
     "thresholds": {
         "warning": 75,
@@ -122,7 +122,7 @@ cat <<EOF > "$PROJECT_DIR/Helpers/config.json"
 }
 
 EOF
-cat <<EOF > "$PROJECT_DIR/reports/reports.log)"
+cat <<EOF > "$Project_Name/reports/reports.log)"
 --- Attendance Report Run: 2026-02-06 18:10:01.468726 ---
 [2026-02-06 18:10:01.469363] ALERT SENT TO bob@example.com: URGENT: Bob Smith, your
 attendance is 46.7%. You will fail this class.
@@ -145,8 +145,8 @@ if [[ "$answer" == "y" || "$answer" == "Y" ]]; then
     fi
 
     # Update JSON using sed
-    sed -i "s/\"warning_threshold\": [0-9]*/\"warning_threshold\": $new_warning/" "$PROJECT_DIR/Helpers/config.json"
-    sed -i "s/\"failure_threshold\": [0-9]*/\"failure_threshold\": $new_failure/" "$PROJECT_DIR/Helpers/config.json"
+    sed -i "s/\"warning_threshold\": [0-9]*/\"warning_threshold\": $new_warning/" "$Project_Name/Helpers/config.json"
+    sed -i "s/\"failure_threshold\": [0-9]*/\"failure_threshold\": $new_failure/" "$Project_Name/Helpers/config.json"
 
     echo "Thresholds updated successfully."
 fi
